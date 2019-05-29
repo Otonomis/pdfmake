@@ -7,8 +7,9 @@ var fonts = {
 	}
 };
 
-var pdfmake = require('../js/index');
-pdfmake.setFonts(fonts);
+var PdfPrinter = require('../src/printer');
+var printer = new PdfPrinter(fonts);
+var fs = require('fs');
 
 
 var docDefinition = {
@@ -16,7 +17,7 @@ var docDefinition = {
 		{
 			stack: [
 				'This header has both top and bottom margins defined',
-				{ text: 'This is a subheader', style: 'subheader' },
+				{text: 'This is a subheader', style: 'subheader'},
 			],
 			style: 'header'
 		},
@@ -32,14 +33,13 @@ var docDefinition = {
 		},
 		{
 			stack: [
-				{
-					text: [
+				{text: [
 						'This line begins a stack of paragraphs. The whole stack uses a ',
-						{ text: 'superMargin', italics: true },
+						{text: 'superMargin', italics: true},
 						' style (with margin and fontSize properties).',
 					]
 				},
-				{ text: ['When you look at the', { text: ' document definition', italics: true }, ', you will notice that fontSize is inherited by all paragraphs inside the stack.'] },
+				{text: ['When you look at the', {text: ' document definition', italics: true}, ', you will notice that fontSize is inherited by all paragraphs inside the stack.']},
 				'Margin however is only applied once (to the whole stack).'
 			],
 			style: 'superMargin'
@@ -52,7 +52,7 @@ var docDefinition = {
 					text: [
 						'Currently margins for ',
 						/* the following margin definition doesn't change anything */
-						{ text: 'inlines', margin: 20 },
+						{text: 'inlines', margin: 20},
 						' are ignored\n\n'
 					],
 				},
@@ -85,9 +85,6 @@ var docDefinition = {
 	}
 };
 
-var now = new Date();
-
-var pdf = pdfmake.createPdf(docDefinition);
-pdf.write('pdfs/margins.pdf');
-
-console.log(new Date() - now);
+var pdfDoc = printer.createPdfKitDocument(docDefinition);
+pdfDoc.pipe(fs.createWriteStream('pdfs/margins.pdf'));
+pdfDoc.end();

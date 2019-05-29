@@ -7,8 +7,9 @@ var fonts = {
 	}
 };
 
-var pdfmake = require('../js/index');
-pdfmake.setFonts(fonts);
+var PdfPrinter = require('../src/printer');
+var printer = new PdfPrinter(fonts);
+var fs = require('fs');
 
 var docDefinition = {
 	//userPassword: '123',
@@ -30,7 +31,8 @@ var docDefinition = {
 
 var now = new Date();
 
-var pdf = pdfmake.createPdf(docDefinition);
-pdf.write('pdfs/security.pdf');
+var pdfDoc = printer.createPdfKitDocument(docDefinition);
+pdfDoc.pipe(fs.createWriteStream('pdfs/security.pdf'));
+pdfDoc.end();
 
 console.log(new Date() - now);

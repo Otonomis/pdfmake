@@ -7,8 +7,9 @@ var fonts = {
 	}
 };
 
-var pdfmake = require('../js/index');
-pdfmake.setFonts(fonts);
+var PdfPrinter = require('../src/printer');
+var printer = new PdfPrinter(fonts);
+var fs = require('fs');
 
 var docDefinition = {
 	background: function (page) {
@@ -37,9 +38,6 @@ var docDefinition = {
 	}
 };
 
-var now = new Date();
-
-var pdf = pdfmake.createPdf(docDefinition);
-pdf.write('pdfs/background.pdf');
-
-console.log(new Date() - now);
+var pdfDoc = printer.createPdfKitDocument(docDefinition);
+pdfDoc.pipe(fs.createWriteStream('pdfs/background.pdf'));
+pdfDoc.end();

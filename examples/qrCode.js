@@ -1,14 +1,21 @@
+var path = require("path");
+
+function mp(relFontPath) {
+	return path.resolve(__dirname, relFontPath)
+}
+
 var fonts = {
 	Roboto: {
-		normal: 'fonts/Roboto-Regular.ttf',
-		bold: 'fonts/Roboto-Medium.ttf',
-		italics: 'fonts/Roboto-Italic.ttf',
-		bolditalics: 'fonts/Roboto-MediumItalic.ttf'
+		normal: mp('./fonts/Roboto-Regular.ttf'),
+		bold: mp('./fonts/Roboto-Medium.ttf'),
+		italics: mp('./fonts/Roboto-Italic.ttf'),
+		bolditalics: mp('./fonts/Roboto-MediumItalic.ttf')
 	}
 };
 
-var pdfmake = require('../js/index');
-pdfmake.setFonts(fonts);
+var PdfPrinter = require('../src/printer');
+var printer = new PdfPrinter(fonts);
+var fs = require('fs');
 
 var greeting = 'Can you see me';
 var url = 'http://pdfmake.org';
@@ -16,35 +23,32 @@ var longText = 'The amount of data that can be stored in the QR code symbol depe
 
 
 function header(text) {
-	return { text: text, margins: [0, 0, 0, 8] };
+	return {text: text, margins: [0, 0, 0, 8]};
 }
 
 var docDefinition = {
 	pageMargins: [10, 10, 10, 10],
 	content: [
 		header(greeting),
-		{ qr: greeting },
+		{qr: greeting},
 		'\n',
 
 		header('Colored QR'),
-		{ qr: greeting, foreground: 'red', background: 'yellow' },
+		{qr: greeting, foreground: 'red', background: 'yellow'},
 		'\n',
 
 		header(url),
-		{ qr: url },
+		{qr: url},
 		'\n',
 
 		header('A very long text (' + longText.length + ' chars)'),
-		{ qr: longText },
+		{qr: longText},
 		'\n',
 		header('same long text with fit = 100 and alignment = right'),
-		{ qr: longText, fit: 150, alignment: 'right' },
+		{qr: longText, fit: 150, alignment: 'right'},
 	]
 }
 
-var now = new Date();
-
-var pdf = pdfmake.createPdf(docDefinition);
-pdf.write('pdfs/qrCode.pdf');
-
-console.log(new Date() - now);
+var pdfDoc = printer.createPdfKitDocument(docDefinition);
+pdfDoc.pipe(fs.createWriteStream(mp('./pdfs/qrCode.pdf')));
+pdfDoc.end();

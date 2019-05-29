@@ -1,5 +1,4 @@
 var gulp = require('gulp');
-var babel = require("gulp-babel");
 var webpack = require('webpack');
 var mocha = require('gulp-spawn-mocha');
 var eslint = require('gulp-eslint');
@@ -12,28 +11,10 @@ const fs = require('fs');
 var DEBUG = process.env.NODE_ENV === 'debug';
 var CI = process.env.CI === 'true';
 
-var vfsBefore = "var vfs = ";
-var vfsAfter = "; if (typeof this.pdfMake !== 'undefined' && typeof this.pdfMake.addVirtualFileSystem !== 'undefined') { this.pdfMake.addVirtualFileSystem(vfs); } if (typeof module !== 'undefined') { module.exports = vfs; }";
+var vfsBefore = "this.pdfMake = this.pdfMake || {}; this.pdfMake.vfs = ";
+var vfsAfter = ";";
 
-gulp.task('buildNode', function () {
-	return gulp.src('src/**/*.js')
-		.pipe(babel({
-			presets: [
-				[
-					"@babel/preset-env",
-					{
-						targets: {
-							node: "8.9"
-						},
-						loose: true
-					}
-				]
-			]
-		}))
-		.pipe(gulp.dest("js"));
-});
-
-gulp.task('buildBrowser', function (callback) {
+gulp.task('build', function (callback) {
 	webpack(require('./webpack.config.js'), function (err, stats) {
 		if (err) {
 			callback(err);
@@ -64,7 +45,7 @@ gulp.task('buildWithStandardFonts', function (callback) {
 });
 
 gulp.task('test', function () {
-	return gulp.src(['./tests/**/*.spec.js'])
+	return gulp.src(['./tests/**/*.js'])
 		.pipe(mocha({
 			debugBrk: DEBUG,
 			R: CI ? 'spec' : 'nyan'
@@ -72,7 +53,7 @@ gulp.task('test', function () {
 });
 
 gulp.task('lint', function () {
-	return gulp.src(['./src/**/*.js', './tests/**/*.js'])
+	return gulp.src(['./src/**/*.js'])
 		.pipe(eslint())
 		.pipe(eslint.format())
 		.pipe(eslint.failAfterError());
@@ -84,7 +65,7 @@ gulp.task('buildFonts', function () {
 			var newContent = Buffer.from(content).toString('base64');
 			callback(null, newContent);
 		}, 'buffer'))
-		.pipe(fc2json('vfs_fonts.js', { flat: true }))
+		.pipe(fc2json('vfs_fonts.js', {flat: true}))
 		.pipe(each(function (content, file, callback) {
 			var newContent = vfsBefore + content + vfsAfter;
 			callback(null, newContent);
@@ -126,6 +107,4 @@ gulp.task('generateExamples', function (cb) {
 	});
 });
 
-gulp.task('build', gulp.series('buildNode', 'buildBrowser'));
-
-gulp.task('default', gulp.series('build', 'buildFonts', 'test', 'lint'));
+gulp.task('default', gulp.series(/*'lint',*/ 'test', 'build', 'buildFonts'));

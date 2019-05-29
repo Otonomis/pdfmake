@@ -7,8 +7,9 @@ var fonts = {
 	}
 };
 
-var pdfmake = require('../js/index');
-pdfmake.setFonts(fonts);
+var PdfPrinter = require('../src/printer');
+var printer = new PdfPrinter(fonts);
+var fs = require('fs');
 
 var now = new Date();
 
@@ -24,7 +25,6 @@ var docDefinition = {
 			]
 		},
 		{ text: 'Go to page 2', linkToPage: 2, decoration: 'underline' },
-		{ text: 'Link to header 2', linkToDestination: 'header2', decoration: 'underline' },
 		'Links are also supported with images:',
 		{ image: 'fonts/sampleImage.jpg', width: 150, link: 'http://pdfmake.org' },
 		{ text: 'Header on page 2', fontSize: 18, bold: true, pageBreak: 'before' },
@@ -35,7 +35,9 @@ var docDefinition = {
 	]
 };
 
-var pdf = pdfmake.createPdf(docDefinition);
-pdf.write('pdfs/links.pdf');
+var now = new Date();
+var pdfDoc = printer.createPdfKitDocument(docDefinition);
+pdfDoc.pipe(fs.createWriteStream('pdfs/links.pdf'));
+pdfDoc.end();
 
 console.log(new Date() - now);

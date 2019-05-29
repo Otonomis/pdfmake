@@ -19,11 +19,9 @@
 [cndjs_url]: https://cdnjs.com/libraries/pdfmake
 
 
-PDF document generation library for server-side and client-side in pure JavaScript.
+PDF document generation library for server-side and client-side usage in pure JavaScript.
 
-Check out [the playground](http://bpampuch.github.io/pdfmake/playground.html) and [examples](https://github.com/bpampuch/pdfmake/tree/master/examples).
-
-#### This is unstable master branch for version 0.2.x, for stable version 0.1.x see [branch 0.1](https://github.com/bpampuch/pdfmake/tree/0.1).
+Check out [the playground](http://bpampuch.github.io/pdfmake/playground.html) and [examples](https://github.com/bpampuch/pdfmake/tree/0.1/examples).
 
 ### Features
 
@@ -53,11 +51,11 @@ Check out [the playground](http://bpampuch.github.io/pdfmake/playground.html) an
 
 Documentation URL: https://pdfmake.github.io/docs/
 
-## Building from sources
+## Building from sources version 0.1.x
 
 using npm:
 ```
-git clone https://github.com/bpampuch/pdfmake.git
+git clone --branch 0.1 https://github.com/bpampuch/pdfmake.git
 cd pdfmake
 npm install
 npm run build
@@ -65,7 +63,7 @@ npm run build
 
 using yarn:
 ```
-git clone https://github.com/bpampuch/pdfmake.git
+git clone --branch 0.1 https://github.com/bpampuch/pdfmake.git
 cd pdfmake
 yarn
 yarn run build

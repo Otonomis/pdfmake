@@ -1,6 +1,5 @@
 /*eslint no-unused-vars: ["error", {"args": "none"}]*/
 /*eslint no-redeclare: "off"*/
-/*eslint no-throw-literal: "off"*/
 
 'use strict';
 /* qr.js -- QR code generator in Javascript (revision 2011-01-19)
@@ -356,7 +355,7 @@ var calculateecc = function (poly, genpoly) {
 	var polylen = poly.length, genpolylen = genpoly.length;
 	for (var i = 0; i < genpolylen; ++i)
 		modulus.push(0);
-	for (var i = 0; i < polylen;) {
+	for (var i = 0; i < polylen; ) {
 		var quotient = GF256_INVMAP[modulus[i++]];
 		if (quotient >= 0) {
 			for (var j = 0; j < genpolylen; ++j) {
@@ -484,7 +483,7 @@ var makebasematrix = function (ver) {
 		}
 	}
 
-	return { matrix: matrix, reserved: reserved };
+	return {matrix: matrix, reserved: reserved};
 };
 
 // fills the data portion (i.e. unmarked in reserved) of the matrix with given
@@ -591,7 +590,7 @@ var evaluatematrix = function (matrix) {
 
 		// evaluate the current row
 		groups = [0]; // the first empty group of white
-		for (var j = 0; j < n;) {
+		for (var j = 0; j < n; ) {
 			var k;
 			for (k = 0; j < n && row[j]; ++k)
 				++j;
@@ -604,7 +603,7 @@ var evaluatematrix = function (matrix) {
 
 		// evaluate the current column
 		groups = [0];
-		for (var j = 0; j < n;) {
+		for (var j = 0; j < n; ) {
 			var k;
 			for (k = 0; j < n && matrix[j][i]; ++k)
 				++j;
@@ -678,14 +677,10 @@ var generate = function (data, ver, mode, ecclevel, mask) {
 //
 
 function generateFrame(data, options) {
-	var MODES = {
-		'numeric': MODE_NUMERIC, 'alphanumeric': MODE_ALPHANUMERIC,
-		'octet': MODE_OCTET
-	};
-	var ECCLEVELS = {
-		'L': ECCLEVEL_L, 'M': ECCLEVEL_M, 'Q': ECCLEVEL_Q,
-		'H': ECCLEVEL_H
-	};
+	var MODES = {'numeric': MODE_NUMERIC, 'alphanumeric': MODE_ALPHANUMERIC,
+		'octet': MODE_OCTET};
+	var ECCLEVELS = {'L': ECCLEVEL_L, 'M': ECCLEVEL_M, 'Q': ECCLEVEL_Q,
+		'H': ECCLEVEL_H};
 
 	options = options || {};
 	var ver = options.version || -1;
@@ -789,6 +784,6 @@ function measure(node) {
 	return node;
 }
 
-export default {
+module.exports = {
 	measure: measure
 };

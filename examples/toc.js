@@ -7,8 +7,9 @@ var fonts = {
 	}
 };
 
-var pdfmake = require('../js/index');
-pdfmake.setFonts(fonts);
+var PdfPrinter = require('../src/printer');
+var printer = new PdfPrinter(fonts);
+var fs = require('fs');
 
 
 var docDefinition = {
@@ -19,19 +20,19 @@ var docDefinition = {
 		},
 		{
 			toc: {
-				title: { text: 'INDEX', style: 'header' },
+				title: {text: 'INDEX', style: 'header'},
 				//textMargin: [0, 0, 0, 0],
 				//textStyle: {italics: true},
-				numberStyle: { bold: true }
+				numberStyle: {bold: true}
 			}
 		},
 		{
 			text: 'This is a header, using header style',
 			style: 'header',
 			tocItem: true,
-			tocStyle: { italics: true },
+			tocStyle: {italics: true},
 			tocMargin: [0, 10, 0, 0],
-			tocNumberStyle: { italics: true, decoration: 'underline' },
+			tocNumberStyle: {italics: true, decoration: 'underline'},
 			pageBreak: 'before'
 		},
 		'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Confectum ponit legam, perferendis nomine miserum, animi. Moveat nesciunt triari naturam.\n\n',
@@ -91,8 +92,8 @@ var docDefinition = {
 };
 
 var now = new Date();
-
-var pdf = pdfmake.createPdf(docDefinition);
-pdf.write('pdfs/toc.pdf');
+var pdfDoc = printer.createPdfKitDocument(docDefinition);
+pdfDoc.pipe(fs.createWriteStream('pdfs/toc.pdf'));
+pdfDoc.end();
 
 console.log(new Date() - now);

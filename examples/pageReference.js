@@ -7,8 +7,9 @@ var fonts = {
 	}
 };
 
-var pdfmake = require('../js/index');
-pdfmake.setFonts(fonts);
+var PdfPrinter = require('../src/printer');
+var printer = new PdfPrinter(fonts);
+var fs = require('fs');
 
 
 var docDefinition = {
@@ -19,11 +20,11 @@ var docDefinition = {
 		{
 			table: {
 				body: [
-					[{ text: 'page #', bold: true }, { text: 'title', bold: true }],
-					[{ pageReference: 'header1', alignment: 'right' }, 'Header one'],
-					[{ pageReference: 'subheader1', alignment: 'right' }, 'Subheader one'],
-					[{ pageReference: 'subheader2', alignment: 'right' }, 'Subheader two'],
-					[{ pageReference: 'subheader3', alignment: 'right' }, 'Subheader three']
+					[{text: 'page #', bold: true}, {text: 'title', bold: true}],
+					[{pageReference: 'header1', alignment: 'right'}, 'Header one'],
+					[{pageReference: 'subheader1', alignment: 'right'}, 'Subheader one'],
+					[{pageReference: 'subheader2', alignment: 'right'}, 'Subheader two'],
+					[{pageReference: 'subheader3', alignment: 'right'}, 'Subheader three']
 				]
 			}
 		},
@@ -33,11 +34,11 @@ var docDefinition = {
 		{
 			table: {
 				body: [
-					[{ text: 'page #', bold: true }, { text: 'title', bold: true }],
-					[{ pageReference: 'header1', alignment: 'right' }, { textReference: 'header1' }],
-					[{ pageReference: 'subheader1', alignment: 'right' }, { textReference: 'subheader1' }],
-					[{ pageReference: 'subheader2', alignment: 'right' }, { textReference: 'subheader2' }],
-					[{ pageReference: 'subheader3', alignment: 'right' }, { textReference: 'subheader3' }]
+					[{text: 'page #', bold: true}, {text: 'title', bold: true}],
+					[{pageReference: 'header1', alignment: 'right'}, {textReference: 'header1'}],
+					[{pageReference: 'subheader1', alignment: 'right'}, {textReference: 'subheader1'}],
+					[{pageReference: 'subheader2', alignment: 'right'}, {textReference: 'subheader2'}],
+					[{pageReference: 'subheader3', alignment: 'right'}, {textReference: 'subheader3'}]
 				]
 			}
 		},
@@ -47,33 +48,33 @@ var docDefinition = {
 		{
 			text: [
 				'Chapter "',
-				{ textReference: 'header1' },
+				{textReference: 'header1'},
 				'" is on page number ',
-				{ pageReference: 'header1' }
+				{pageReference: 'header1'}
 			]
 		},
 		{
 			text: [
 				'Chapter "',
-				{ textReference: 'subheader1' },
+				{textReference: 'subheader1'},
 				'" is on page number ',
-				{ pageReference: 'subheader1' }
+				{pageReference: 'subheader1'}
 			]
 		},
 		{
 			text: [
 				'Chapter "',
-				{ textReference: 'subheader2' },
+				{textReference: 'subheader2'},
 				'" is on page number ',
-				{ pageReference: 'subheader2' }
+				{pageReference: 'subheader2'}
 			]
 		},
 		{
 			text: [
 				'Chapter "',
-				{ textReference: 'subheader3' },
+				{textReference: 'subheader3'},
 				'" is on page number ',
-				{ pageReference: 'subheader3' }
+				{pageReference: 'subheader3'}
 			]
 		},
 		{
@@ -140,8 +141,8 @@ var docDefinition = {
 };
 
 var now = new Date();
-
-var pdf = pdfmake.createPdf(docDefinition);
-pdf.write('pdfs/pageReference.pdf');
+var pdfDoc = printer.createPdfKitDocument(docDefinition);
+pdfDoc.pipe(fs.createWriteStream('pdfs/pageReference.pdf'));
+pdfDoc.end();
 
 console.log(new Date() - now);
